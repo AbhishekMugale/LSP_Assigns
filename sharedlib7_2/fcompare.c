@@ -1,0 +1,38 @@
+#include "fcompare.h"
+#include<fcntl.h>
+#include<stdio.h>
+#include<unistd.h>
+#include<sys/stat.h>
+#include<string.h>
+void FileCompare(int fd1,int fd2)
+{
+   struct stat obj1,obj2;
+   char buffer1[1024],buffer2[1024];
+   int Ret = 0;
+   fstat(fd1,&obj1);
+   fstat(fd2,&obj2);
+   
+   if(obj1.st_size != obj2.st_size)
+   {
+       printf("Sizes of both files are not equal \n");
+       return;
+   }    
+   
+   while((Ret = read(fd1,buffer1,sizeof(buffer1))) != 0)
+   {
+       Ret = read(fd2,buffer2,sizeof(buffer2));
+       if(memcmp(buffer1,buffer2,Ret) != 0)
+       {
+          break;
+       }
+   }
+   if(Ret == 0)
+   {
+      printf("Both files are identical\n");
+   }
+   else
+   {
+      printf("Both files data are not same\n");
+   }
+   
+}
